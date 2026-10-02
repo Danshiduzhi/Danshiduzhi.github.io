@@ -115,7 +115,10 @@ if (autoplay) {
 
   function renderAutoplay() {
     slides.forEach((slide, index) => {
-      slide.classList.toggle("is-active", index === currentIndex);
+      const isActive = index === currentIndex;
+      slide.classList.toggle("is-active", isActive);
+      slide.setAttribute("aria-hidden", String(!isActive));
+      slide.inert = !isActive;
     });
 
     progressSegments.forEach((segment, index) => {

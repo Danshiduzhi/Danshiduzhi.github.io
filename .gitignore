@@ -1,6 +1,7 @@
 # Local preview and working files
 *.png
 *.jpg
+!assets/images/og-image.jpg
 ai-agent-poster.html
 web-info-checklist.md
 assets/images/avatar.webp
