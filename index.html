@@ -31,18 +31,8 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="#top">
-        <span class="brand-mark">
-          <img
-            src="assets/images/avatar-96.webp"
-            srcset="assets/images/avatar-96.webp 1x, assets/images/avatar-192.webp 2x"
-            width="42"
-            height="42"
-            alt="旦史独支头像"
-            fetchpriority="high"
-            decoding="async"
-          >
-        </span>
-        <span class="brand-text">独支 / DAVID</span>
+        <span class="brand-beacon" aria-hidden="true"></span>
+        <span class="brand-text">你正在支持未来的企业家</span>
       </a>
 
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
@@ -705,9 +695,17 @@
 
           <div class="contact-methods">
             <div class="contact-info">
-              <span class="contact-label">QQ 邮箱</span>
-              <a class="contact-link" href="mailto:3539969856@qq.com">3539969856@qq.com</a>
-              <button class="contact-copy ripple-target" type="button" data-copy-value="3539969856@qq.com">复制邮箱</button>
+              <div class="contact-detail">
+                <span class="contact-label">QQ 邮箱</span>
+                <a class="contact-link" href="mailto:3539969856@qq.com">3539969856@qq.com</a>
+                <button class="contact-copy ripple-target" type="button" data-copy-value="3539969856@qq.com">复制邮箱</button>
+              </div>
+
+              <div class="contact-detail">
+                <span class="contact-label">微信号</span>
+                <strong class="contact-account">ROCKETBOYDZ</strong>
+                <button class="contact-copy ripple-target" type="button" data-copy-value="ROCKETBOYDZ">复制微信号</button>
+              </div>
             </div>
 
             <figure class="contact-qr">
