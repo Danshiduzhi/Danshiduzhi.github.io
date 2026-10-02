@@ -1,0 +1,13 @@
+# Local preview and working files
+*.png
+*.jpg
+ai-agent-poster.html
+web-info-checklist.md
+assets/images/avatar.webp
+assets/images/profile.webp
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

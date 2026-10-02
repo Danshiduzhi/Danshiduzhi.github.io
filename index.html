@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="旦史独支（David）的个人主页：3D 打印与建模、火箭实验、AI 工具、文化数字化与非遗项目。">
+  <title>旦史独支 / David</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
+  <div class="site-effects" aria-hidden="true">
+    <div class="site-grid"></div>
+    <div class="star-layer star-layer-one"></div>
+    <div class="star-layer star-layer-two"></div>
+    <div class="global-chip global-chip-gpt">GPT</div>
+    <div class="global-chip global-chip-claude">Claude</div>
+    <div class="global-chip global-chip-deepseek">DeepSeek</div>
+    <div class="global-chip global-chip-gemini">Gemini</div>
+    <div class="global-chip global-chip-qwen">Qwen</div>
+    <div class="global-chip global-chip-codex">Codex</div>
+    <div class="global-word global-word-agent">AI AGENT</div>
+    <div class="global-word global-word-model">MODEL</div>
+    <div class="global-word global-word-prompt">PROMPT</div>
+    <div class="global-word global-word-automation">AUTOMATION</div>
+    <div class="global-word global-word-print">3D PRINT</div>
+    <div class="global-word global-word-robotics">ROBOTICS</div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top">
+        <span class="brand-mark">
+          <img
+            src="assets/images/avatar-96.webp"
+            srcset="assets/images/avatar-96.webp 1x, assets/images/avatar-192.webp 2x"
+            width="42"
+            height="42"
+            alt="旦史独支头像"
+            fetchpriority="high"
+            decoding="async"
+          >
+        </span>
+        <span class="brand-text">独支 / DAVID</span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="sr-only">打开导航</span>
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+      </button>
+
+      <nav id="site-nav" class="site-nav" aria-label="主导航">
+        <a href="#about" data-spy-link>关于我</a>
+        <a href="#projects" data-spy-link>项目</a>
+        <a href="#services" data-spy-link>服务</a>
+        <a href="#process" data-spy-link>流程</a>
+        <a class="nav-cta ripple-target" href="#contact">联系合作</a>
+      </nav>
+    </div>
+  </header>
+
+  <aside id="chapter-rail" class="chapter-rail" aria-label="页面章节">
+    <span class="chapter-rail-label">SCROLL</span>
+    <a href="#top" data-spy-link>00 / 首页</a>
+    <a href="#about" data-spy-link>01 / 关于我</a>
+    <a href="#projects" data-spy-link>02 / 项目</a>
+    <a href="#services" data-spy-link>03 / 服务</a>
+    <a href="#process" data-spy-link>04 / 流程</a>
+    <a href="#contact" data-spy-link>05 / 联系</a>
+  </aside>
+
+  <main id="main">
+    <section id="top" class="hero" data-section>
+      <div class="hero-effects" aria-hidden="true">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="hero-particle particle-one"></div>
+        <div class="hero-particle particle-two"></div>
+        <div class="hero-particle particle-three"></div>
+        <div class="hero-particle particle-four"></div>
+        <div class="floating-chip chip-gpt">
+          <svg class="model-icon" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M16 4.5a11.5 11.5 0 0 0-9.9 5.8l9.9 5.7 9.9-5.7A11.5 11.5 0 0 0 16 4.5z" />
+            <path d="M6.1 10.3A11.5 11.5 0 0 0 10 25.2l9.9-5.7v-11.4l-9.9-5.8a11.5 11.5 0 0 0-3.9 8z" />
+            <path d="M10 25.2a11.5 11.5 0 0 0 16-6.5l-9.9-5.7-9.9 5.7a11.5 11.5 0 0 0 3.8 6.5z" />
+          </svg>
+          <span>GPT</span>
+        </div>
+        <div class="floating-chip chip-claude">
+          <svg class="model-icon" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M16 4v8M16 20v8M4 16h8M20 16h8M7.5 7.5l5.7 5.7M18.8 18.8l5.7 5.7M24.5 7.5l-5.7 5.7M13.2 18.8l-5.7 5.7" />
+          </svg>
+          <span>Claude</span>
+        </div>
+        <div class="floating-chip chip-deepseek">
+          <svg class="model-icon" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M3.5 18.5c3.4.1 6-1.7 7.4-4.8C12.3 10.3 15.1 8 19.3 8c1.8 0 3.3.5 4.6 1.6-1.6.2-2.8.8-3.6 1.8 1.8.1 3.2.7 4.2 1.8-2.2.2-3.8.9-4.8 2.2-1.6 1.9-3.9 2.9-6.9 2.9-3.7 0-6.8-1.9-9.3-5.8z" />
+            <circle cx="23.5" cy="10.5" r="1" />
+            <path d="M19.5 24.5c2.4-.8 4.2-2.1 5.5-3.9" />
+          </svg>
+          <span>DeepSeek</span>
+        </div>
+        <div class="floating-chip chip-gemini">
+          <svg class="model-icon" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M16 4c.7 6.4 4.6 10.3 11 11-6.4.7-10.3 4.6-11 11-.7-6.4-4.6-10.3-11-11 6.4-.7 10.3-4.6 11-11z" />
+          </svg>
+          <span>Gemini</span>
+        </div>
+        <div class="floating-chip chip-qwen">
+          <svg class="model-icon" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M16 5a11 11 0 1 0 5.8 20.3L27 28l-1.8-5.6A11 11 0 0 0 16 5z" />
+            <path d="M16 10a6 6 0 1 1-6 6" />
+          </svg>
+          <span>Qwen</span>
+        </div>
+        <div class="floating-word word-3d">3D PRINT</div>
+        <div class="floating-word word-ai">AI AGENT</div>
+        <div class="floating-word word-rocket">ROCKET</div>
+        <div class="floating-word word-prototype">PROTOTYPE</div>
+        <div class="floating-word word-open">OPEN SOURCE</div>
+      </div>
+      <div class="container hero-content">
+        <div class="hero-copy">
+          <div class="hero-meta">
+            <span>BUILDER / PROTOTYPE THE FUTURE</span>
+            <span id="current-chapter">00 / 首页</span>
+          </div>
+
+          <h1 data-parallax="0.06">
+            <span class="hero-name">旦史独支</span>
+            <span class="hero-name-en">David / Maker &amp; Builder</span>
+          </h1>
+
+          <p class="hero-lead" data-parallax="0.03">
+            把想法从草图推进到实体原型。3D 打印、火箭实验、AI 工具与文化数字化，是我正在同时推进的四条线。
+          </p>
+
+          <div class="hero-actions">
+            <a class="button button-primary ripple-target" href="#projects">查看项目</a>
+            <a class="button button-secondary ripple-target" href="#contact">联系合作</a>
+          </div>
+        </div>
+
+        <div class="hero-spec" data-parallax="-0.04" aria-label="个人方向">
+          <div class="spec-row">
+            <span>3D 打印与建模</span>
+            <strong>主方向</strong>
+          </div>
+          <div class="spec-row">
+            <span>火箭实验</span>
+            <strong>约 200 次</strong>
+          </div>
+          <div class="spec-row">
+            <span>AI Agent 安装</span>
+            <strong>服务中</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-strip" aria-label="项目数据">
+      <div class="container stats-grid">
+        <div class="stat-item reveal" data-reveal>
+          <strong>200+</strong>
+          <span>火箭相关实验</span>
+        </div>
+        <div class="stat-item reveal" data-reveal data-delay="80">
+          <strong>16-17</strong>
+          <span>真实发射记录</span>
+        </div>
+        <div class="stat-item reveal" data-reveal data-delay="160">
+          <strong>2 台</strong>
+          <span>3D 打印设备经验</span>
+        </div>
+        <div class="stat-item reveal" data-reveal data-delay="240">
+          <strong>AI</strong>
+          <span>工具与 Agent 实践</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="autoplay" class="section autoplay-section" aria-label="自动播放展示">
+      <div class="container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">LIVE / AUTOPLAY</p>
+          <h2>正在推进的方向</h2>
+          <p>自动轮播四个重点方向，也可以随时暂停或手动切换。</p>
+        </div>
+
+        <div class="autoplay-panel reveal" data-autoplay data-direction="next" data-reveal>
+          <div class="autoplay-track">
+            <article class="autoplay-slide is-active" data-slide>
+              <div class="slide-visual">
+                <img src="assets/images/printer-demo.webp" alt="" loading="lazy" decoding="async">
+                <span>01</span>
+                <strong>MAKE</strong>
+              </div>
+              <div class="slide-copy">
+                <p class="slide-kicker">3D PRINTING / MODELING</p>
+                <h3>3D 打印与建模</h3>
+                <p>从草图、照片和尺寸开始建模，处理结构、公差、支撑与材料选择，把想法推进到实体原型。</p>
+                <div class="slide-tags">
+                  <span>建模</span>
+                  <span>代打</span>
+                  <span>定制</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="autoplay-slide" data-slide>
+              <div class="slide-visual">
+                <img src="assets/images/rocket-project.webp" alt="" loading="lazy" decoding="async">
+                <span>02</span>
+                <strong>LAUNCH</strong>
+              </div>
+              <div class="slide-copy">
+                <p class="slide-kicker">ROCKET / EXPERIMENT</p>
+                <h3>火箭实验</h3>
+                <p>约 200 次大小实验和 16 到 17 次真实发射记录，先预估、再测试、最后复盘失败数据。</p>
+                <div class="slide-tags">
+                  <span>试车</span>
+                  <span>记录</span>
+                  <span>安全</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="autoplay-slide" data-slide>
+              <div class="slide-visual">
+                <img src="assets/images/ai-agent.webp" alt="" loading="lazy" decoding="async">
+                <span>03</span>
+                <strong>AGENT</strong>
+              </div>
+              <div class="slide-copy">
+                <p class="slide-kicker">AI / AUTOMATION</p>
+                <h3>AI Agent 与工具链</h3>
+                <p>安装运行环境、接入 API 和常用工具，处理启动、调用与基础排错，把 AI 变成可运行的工作流。</p>
+                <div class="slide-tags">
+                  <span>环境</span>
+                  <span>API</span>
+                  <span>调试</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="autoplay-slide" data-slide>
+              <div class="slide-visual is-contain">
+                <img src="assets/images/culture-project.webp" alt="" loading="lazy" decoding="async">
+                <span>04</span>
+                <strong>CULTURE</strong>
+              </div>
+              <div class="slide-copy">
+                <p class="slide-kicker">HERITAGE / CULTURE</p>
+                <h3>文化与非遗数字化</h3>
+                <p>围绕地方纹样、器物、建筑和节日元素做 3D 样本、展示模型与文创原型，先确认文化语境和授权边界。</p>
+                <div class="slide-tags">
+                  <span>纹样</span>
+                  <span>器物</span>
+                  <span>数字化</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="autoplay-footer">
+            <div class="autoplay-controls">
+              <button class="autoplay-button ripple-target" type="button" data-autoplay-toggle aria-label="暂停自动播放">
+                <svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 5v14M16 5v14" />
+                </svg>
+                <svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 5l11 7-11 7V5z" />
+                </svg>
+                <span>暂停</span>
+              </button>
+              <button class="autoplay-arrow ripple-target" type="button" data-autoplay-prev aria-label="上一条">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M15 5l-7 7 7 7" />
+                </svg>
+              </button>
+              <button class="autoplay-arrow ripple-target" type="button" data-autoplay-next aria-label="下一条">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="autoplay-progress" aria-hidden="true">
+              <span class="is-active"></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery" class="section visual-archive" aria-label="视觉档案">
+      <div class="container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">VISUAL / ARCHIVE</p>
+          <h2>视觉档案</h2>
+          <p>设备、结构和航天参考图，用来记录制造过程和审美来源。</p>
+        </div>
+
+        <div class="archive-grid">
+          <figure class="archive-card reveal" data-reveal>
+            <img src="assets/images/3d-printing-design.webp" alt="3D 打印机械设计底图" loading="lazy" decoding="async">
+            <figcaption>
+              <span>DESIGN</span>
+              <strong>机械结构设计</strong>
+            </figcaption>
+          </figure>
+
+          <figure class="archive-card reveal" data-reveal data-delay="80">
+            <img src="assets/images/printer-machine.webp" alt="手搓开源 3D 打印机整机" loading="lazy" decoding="async">
+            <figcaption>
+              <span>MAKE</span>
+              <strong>手搓打印机</strong>
+            </figcaption>
+          </figure>
+
+          <figure class="archive-card reveal" data-reveal data-delay="160">
+            <img src="assets/images/laser-engraver.webp" alt="开源激光雕刻机复刻展示" loading="lazy" decoding="async">
+            <figcaption>
+              <span>BUILD</span>
+              <strong>激光雕刻机复刻</strong>
+            </figcaption>
+          </figure>
+
+          <figure class="archive-card reference reveal" data-reveal data-delay="240">
+            <img src="assets/images/rocket-reference.webp" alt="火箭与航天参考图" loading="lazy" decoding="async" style="object-position: center 38%;">
+            <figcaption>
+              <span>REFERENCE</span>
+              <strong>航天灵感参考</strong>
+            </figcaption>
+          </figure>
+
+          <figure class="archive-card reveal" data-reveal data-delay="80">
+            <img src="assets/images/printer-demo.webp" alt="3D 打印机工作演示" loading="lazy" decoding="async">
+            <figcaption>
+              <span>PROCESS</span>
+              <strong>打印工作演示</strong>
+            </figcaption>
+          </figure>
+
+          <figure class="archive-card reveal" data-reveal data-delay="160">
+            <img src="assets/images/rocket-project.webp" alt="火箭项目底图" loading="lazy" decoding="async" style="object-position: center 42%;">
+            <figcaption>
+              <span>PROJECT</span>
+              <strong>火箭项目底图</strong>
+            </figcaption>
+          </figure>
+
+          <figure class="archive-card is-portrait reveal" data-reveal data-delay="240">
+            <img src="assets/images/culture-project.webp" alt="文化项目展示图" loading="lazy" decoding="async">
+            <figcaption>
+              <span>CULTURE</span>
+              <strong>文化项目底图</strong>
+            </figcaption>
+          </figure>
+
+          <figure class="archive-card reveal" data-reveal data-delay="320">
+            <img src="assets/images/ai-agent.webp" alt="AI Agent 安装底图" loading="lazy" decoding="async">
+            <figcaption>
+              <span>AI</span>
+              <strong>AI Agent 安装底图</strong>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section" data-section>
+      <div class="container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">01 / ABOUT</p>
+          <h2>关于我</h2>
+          <p>一个喜欢把动手实践、数字工具和真实项目连接起来的年轻人。</p>
+        </div>
+
+        <div class="about-grid">
+          <article class="about-copy reveal" data-reveal>
+            <p>
+              我是旦史独支，也可以叫我 David。现在是一名中国学生。我的兴趣横跨实体制造和数字工具，喜欢从零开始搭东西，也喜欢把一个模糊想法一步步变成原型。
+            </p>
+            <p>
+              我做过 3D 打印、建模、火箭实验、AI 工具和小型自动化项目，也在尝试把地方文化、非遗元素和 3D 建模结合起来。对我来说，技术不只是屏幕里的东西，它应该能落到材料、结构和真实场景里。
+            </p>
+          </article>
+
+          <aside class="profile-panel reveal" data-reveal data-delay="100" aria-label="个人信息">
+            <div class="profile-row">
+              <span>姓名</span>
+              <strong>旦史独支 / David</strong>
+            </div>
+            <div class="profile-row">
+              <span>身份</span>
+              <strong>中国学生</strong>
+            </div>
+            <div class="profile-row">
+              <span>关注</span>
+              <strong>3D 打印 / 火箭 / AI</strong>
+            </div>
+          </aside>
+        </div>
+
+        <div class="tag-list reveal" data-reveal data-delay="160">
+          <span>3D 打印</span>
+          <span>建模与定制</span>
+          <span>私人火箭</span>
+          <span>AI Agent</span>
+          <span>文化数字化</span>
+          <span>非遗数字化</span>
+          <span>小项目原型</span>
+        </div>
+
+        <div class="principle-grid">
+          <article class="principle-card reveal" data-reveal>
+            <span class="principle-index">A</span>
+            <h3>先预估，再动手</h3>
+            <p>火箭实验反复证明，没有预估和记录，直觉就会变成无法复盘的运气。</p>
+          </article>
+          <article class="principle-card reveal" data-reveal data-delay="80">
+            <span class="principle-index">B</span>
+            <h3>失败也是数据</h3>
+            <p>尺寸、参数、错误和反馈都保留下来，下一次迭代才有依据。</p>
+          </article>
+          <article class="principle-card reveal" data-reveal data-delay="160">
+            <span class="principle-index">C</span>
+            <h3>文化先尊重语境</h3>
+            <p>做文化类项目时，先确认背景、使用场景和授权边界，再谈建模与打印。</p>
+          </article>
+        </div>
+
+        <div class="capability-grid">
+          <article class="capability-item reveal" data-reveal>
+            <span>DESIGN</span>
+            <h3>3D 设计与建模</h3>
+            <p>草图、照片、尺寸转模型，修模、结构优化与打印准备。</p>
+          </article>
+          <article class="capability-item reveal" data-reveal data-delay="80">
+            <span>MAKE</span>
+            <h3>实体制造</h3>
+            <p>FDM 打印、公差控制、支撑策略、材料选择与装配验证。</p>
+          </article>
+          <article class="capability-item reveal" data-reveal data-delay="160">
+            <span>AI</span>
+            <h3>AI 工具链</h3>
+            <p>Agent 安装、API 接入、自动化流程与运行排错。</p>
+          </article>
+          <article class="capability-item reveal" data-reveal data-delay="240">
+            <span>CULTURE</span>
+            <h3>文化数字化</h3>
+            <p>地方纹样、器物、建筑元素的 3D 样本、展示模型与文创原型。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="section section-soft" data-section>
+      <div class="container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">02 / PROJECTS</p>
+          <h2>我在做什么</h2>
+          <p>从实体制造到 AI 工具，每个方向都尽量留下作品、数据和可复盘的记录。</p>
+        </div>
+
+        <div class="project-grid">
+          <article class="project-card reveal" data-reveal>
+            <div class="project-index">01</div>
+            <figure class="project-media">
+              <img src="assets/images/printer-machine.webp" alt="手搓开源 3D 打印机整机" loading="lazy" decoding="async">
+            </figure>
+            <h3>3D 打印与建模</h3>
+            <p>自己装过开源 3D 打印机，也使用拓竹 A1。做过火箭部件、小物件、摆摊商品和非遗打印样本，正在从“会打印”走向“会设计、会改结构”。</p>
+            <ul class="project-points">
+              <li>从草图、照片和尺寸开始建模</li>
+              <li>支持代打、修模和简单定制</li>
+              <li>关注公差、支撑、材料与强度</li>
+            </ul>
+            <div class="project-meta">
+              <span>设备与建模</span>
+              <strong>进行中</strong>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-reveal data-delay="80">
+            <div class="project-index">02</div>
+            <figure class="project-media">
+              <img src="assets/images/rocket-project.webp" alt="火箭项目展示图" loading="lazy" decoding="async" style="object-position: center 42%;">
+            </figure>
+            <h3>火箭实验</h3>
+            <p>累计约 200 次大小实验，真实发射约 16 到 17 枚。现在更重视安全、记录、预估和失败分析，而不是只看一次成功。</p>
+            <ul class="project-points">
+              <li>试车、部件测试与发射记录</li>
+              <li>先写预估，再对照实际结果</li>
+              <li>安全清单优先于性能追求</li>
+            </ul>
+            <div class="project-meta">
+              <span>动手实验</span>
+              <strong>行动中</strong>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-reveal data-delay="160">
+            <div class="project-index">03</div>
+            <figure class="project-media is-contain">
+              <img src="assets/images/culture-project.webp" alt="文化项目展示图" loading="lazy" decoding="async">
+            </figure>
+            <h3>文化与非遗 × 3D 打印</h3>
+            <p>尝试把地方纹样、器物、建筑和节日元素转成 3D 模型与打印样本，让文化物件有新的展示、教学和文创表达方式。</p>
+            <ul class="project-points">
+              <li>纹样、器物与建筑模型化</li>
+              <li>打印样本、展示模型与文创原型</li>
+              <li>先确认文化背景与授权边界</li>
+            </ul>
+            <div class="project-meta">
+              <span>文化与技术</span>
+              <strong>探索中</strong>
+            </div>
+          </article>
+
+          <article class="project-card reveal" data-reveal data-delay="240">
+            <div class="project-index">04</div>
+            <figure class="project-media">
+              <img src="assets/images/ai-agent.webp" alt="AI Agent 安装与工具链展示图" loading="lazy" decoding="async">
+            </figure>
+            <h3>AI 工具与小项目</h3>
+            <p>安装和配置 Codex 等 AI 编程工具，调用 API，做过公众号小工具和小型自动化。也在学习把 AI 变成真正能交付的作品。</p>
+            <ul class="project-points">
+              <li>Agent 环境与 API 配置</li>
+              <li>公众号小工具和自动化尝试</li>
+              <li>从小功能走向完整作品</li>
+            </ul>
+            <div class="project-meta">
+              <span>数字工具</span>
+              <strong>持续学习</strong>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="section" data-section>
+      <div class="container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">03 / SERVICES</p>
+          <h2>我能提供什么</h2>
+          <p>先说明需求、材料和交付要求，再判断能不能做、多久能做、怎么报价。</p>
+        </div>
+
+        <div class="service-grid">
+          <article class="service-card reveal" data-reveal>
+            <div class="service-index">01</div>
+            <div class="service-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7l8-4 8 4-8 4-8-4z" />
+                <path d="M4 7v10l8 4 8-4V7M12 11v10" />
+              </svg>
+            </div>
+            <h3>3D 建模 / 代打 / 定制</h3>
+            <p>根据草图、照片、尺寸或想法建模，提供打印建议、材料选择、简单修模和小批量代打。</p>
+            <ul class="service-deliverables">
+              <li>STL / STEP / 3MF 文件或实物成品</li>
+              <li>结构、尺寸和打印方向建议</li>
+              <li>按数量、材料和精度报价</li>
+            </ul>
+          </article>
+
+          <article class="service-card reveal" data-reveal data-delay="80">
+            <div class="service-index">02</div>
+            <div class="service-icon is-blue">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16" />
+              </svg>
+            </div>
+            <h3>AI Agent 安装指导</h3>
+            <p>协助配置运行环境、依赖、API 和常用工具，指导启动、调用和基础排错。不提供未授权软件。</p>
+            <ul class="service-deliverables">
+              <li>环境检查与依赖配置</li>
+              <li>API、工具与启动流程指导</li>
+              <li>常见错误排查与使用说明</li>
+            </ul>
+          </article>
+
+          <article class="service-card reveal" data-reveal data-delay="160">
+            <div class="service-index">03</div>
+            <div class="service-icon is-yellow">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14z" />
+                <path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5" />
+              </svg>
+            </div>
+            <h3>小项目原型</h3>
+            <p>从需求拆解、结构设计到打印验证，适合小装置、展示模型、简单自动化和课程项目原型。</p>
+            <ul class="service-deliverables">
+              <li>需求拆解和原型方案</li>
+              <li>结构设计、打印与装配验证</li>
+              <li>迭代记录和交付说明</li>
+            </ul>
+          </article>
+
+          <article class="service-card reveal" data-reveal data-delay="240">
+            <div class="service-index">04</div>
+            <div class="service-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2l2.4 5.6L20 10l-5.6 2.4L12 18l-2.4-5.6L4 10l5.6-2.4L12 2z" />
+                <path d="M19 16l.8 1.9 1.9.8-1.9.8L19 21.5l-.8-1.9-1.9-.8 1.9-.8L19 16z" />
+              </svg>
+            </div>
+            <h3>文化相关设计</h3>
+            <p>围绕地方纹样、器物、建筑和节日元素做 3D 样本、展示模型、文创原型与数字化整理。</p>
+            <ul class="service-deliverables">
+              <li>文化元素整理与数字化建模</li>
+              <li>展示模型、打印样本和文创原型</li>
+              <li>按场景确认合作与使用边界</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" class="section section-soft" data-section>
+      <div class="container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">04 / PROCESS</p>
+          <h2>合作流程</h2>
+          <p>先把需求讲清楚，再决定能不能接，避免双方浪费时间。</p>
+        </div>
+
+        <ol class="process-grid">
+          <li class="reveal" data-reveal>
+            <span class="step-number">01</span>
+            <h3>说明需求</h3>
+            <p>提供参考图、尺寸、用途、数量、期望时间和预算范围。</p>
+          </li>
+          <li class="reveal" data-reveal data-delay="80">
+            <span class="step-number">02</span>
+            <h3>确认可行性</h3>
+            <p>判断建模、材料、打印强度、成本和交付风险。</p>
+          </li>
+          <li class="reveal" data-reveal data-delay="160">
+            <span class="step-number">03</span>
+            <h3>报价与打样</h3>
+            <p>确认方案后报价，需要时先做小样或结构验证。</p>
+          </li>
+          <li class="reveal" data-reveal data-delay="240">
+            <span class="step-number">04</span>
+            <h3>交付与记录</h3>
+            <p>交付成品或文件，并保留尺寸、参数和反馈，方便迭代。</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="faq" class="section section-line" data-section>
+      <div class="container narrow">
+        <div class="section-heading reveal">
+          <p class="section-kicker">05 / FAQ</p>
+          <h2>常见问题</h2>
+        </div>
+
+        <div class="faq-list">
+          <details class="reveal" data-reveal>
+            <summary>可以只代打，不建模吗？</summary>
+            <p>可以。你需要提供可打印的 STL、STEP 或 3MF 文件，并说明尺寸、材料、颜色和数量。</p>
+          </details>
+          <details class="reveal" data-reveal>
+            <summary>只有照片或草图，可以建模吗？</summary>
+            <p>可以先判断。照片适合做外形参考，但精确结构还需要尺寸、多角度照片或简单草图。</p>
+          </details>
+          <details class="reveal" data-reveal>
+            <summary>AI Agent 安装提供什么？</summary>
+            <p>提供安装指导、环境配置、API 和常用工具接入、运行排错。不会提供或传播未授权软件。</p>
+          </details>
+          <details class="reveal" data-reveal>
+            <summary>文化类项目怎么做？</summary>
+            <p>先确认文化背景、使用场景和授权边界，再做数字化、建模和打印样本，避免脱离语境地复制。</p>
+          </details>
+          <details class="reveal" data-reveal>
+            <summary>代打需要提供哪些信息？</summary>
+            <p>模型文件、尺寸、数量、材料、颜色、强度和期望交付时间。没有文件时，可以先判断能否建模。</p>
+          </details>
+          <details class="reveal" data-reveal>
+            <summary>小型原型通常怎么做？</summary>
+            <p>先把目标拆成可验证的小模块，再做结构、打印和装配测试。比起一次做完整成品，先验证关键问题更可靠。</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section" data-section>
+      <div class="container narrow">
+        <div class="book-panel reveal" data-reveal>
+          <p class="section-kicker">06 / CONTACT</p>
+          <h2>有想法，就先聊清楚</h2>
+          <p class="book-desc">
+            可以直接通过 QQ 邮箱联系，也可以扫描企业微信名片添加。下面这段文字可以作为初次沟通模板。
+          </p>
+
+          <div class="contact-methods">
+            <div class="contact-info">
+              <span class="contact-label">QQ 邮箱</span>
+              <a class="contact-link" href="mailto:3539969856@qq.com">3539969856@qq.com</a>
+              <button class="contact-copy ripple-target" type="button" data-copy-value="3539969856@qq.com">复制邮箱</button>
+            </div>
+
+            <figure class="contact-qr">
+              <img
+                src="assets/images/wecom-card-630.webp"
+                srcset="assets/images/wecom-card-630.webp 630w, assets/images/wecom-card.webp 1050w"
+                sizes="(max-width: 720px) 260px, 240px"
+                width="1050"
+                height="1383"
+                alt="企业微信名片和二维码"
+                loading="lazy"
+                decoding="async"
+              >
+              <figcaption>企业微信名片与二维码</figcaption>
+            </figure>
+          </div>
+
+          <div class="booking-copy">
+            <div class="booking-copy-head">
+              <span>合作咨询模板</span>
+              <button id="copy-booking" class="copy-button ripple-target" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="9" y="9" width="11" height="11" rx="2" />
+                  <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+                </svg>
+                复制
+              </button>
+            </div>
+            <p id="booking-message">
+              你好，我想咨询一个项目。需求类型是：3D 建模 / 代打 / AI Agent 安装 / 小项目原型 / 文化相关设计。我手上有参考图或尺寸，期望交付时间是【填写】，预算范围是【填写】。方便的话请告诉我下一步需要准备什么。
+            </p>
+          </div>
+
+          <ul class="prepare-list">
+            <li>参考图片、草图或现有模型文件</li>
+            <li>尺寸、数量、用途和材料要求</li>
+            <li>期望时间、预算范围和交付形式</li>
+          </ul>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>个人主页仅展示公开信息、项目与服务。</p>
+      <p>PROTOTYPE THE FUTURE · 旦史独支 / David</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
