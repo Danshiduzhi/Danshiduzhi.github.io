@@ -1,3 +1,6 @@
+(() => {
+  "use strict";
+
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const menuToggle = document.querySelector(".menu-toggle");
@@ -237,3 +240,5 @@ const spyObserver = new IntersectionObserver(
 );
 
 sections.forEach((section) => spyObserver.observe(section));
+
+})();

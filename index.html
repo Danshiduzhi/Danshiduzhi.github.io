@@ -190,6 +190,72 @@
       </div>
     </section>
 
+    <section id="orders" class="section section-soft orders-section" aria-label="成交订单统计">
+      <div class="container">
+        <div class="section-heading reveal">
+          <p class="section-kicker">ORDERS / 06.13—10.02</p>
+          <h2>成交数据</h2>
+          <p>从 2026 年 6 月 13 日到 10 月 2 日，累计成交 117+ 单、净利润 9,166+ 元。折线表示累计数据，单日最高不超过 5 单。</p>
+        </div>
+
+        <div class="orders-panel reveal" data-reveal>
+          <div class="orders-summary">
+            <div class="order-stat">
+              <span>累计订单</span>
+              <strong>117+</strong>
+              <small>单</small>
+            </div>
+            <div class="order-stat">
+              <span>累计净利润</span>
+              <strong>9,166+</strong>
+              <small>元</small>
+            </div>
+            <div class="order-stat">
+              <span>单日最高</span>
+              <strong>5</strong>
+              <small>单</small>
+            </div>
+          </div>
+
+          <div class="orders-charts">
+            <article class="order-chart-card">
+              <div class="order-chart-head">
+                <h3>累计成交订单</h3>
+                <span>117+ 单</span>
+              </div>
+              <div class="orders-chart-wrap">
+                <svg
+                  id="orders-chart"
+                  class="orders-chart"
+                  viewBox="0 0 900 340"
+                  role="img"
+                  aria-label="从 2026 年 6 月 13 日到 10 月 2 日的累计成交订单折线图，累计超过 117 单"
+                  preserveAspectRatio="xMidYMid meet"
+                ></svg>
+              </div>
+            </article>
+
+            <article class="order-chart-card">
+              <div class="order-chart-head">
+                <h3>累计净利润</h3>
+                <span>¥9,166+</span>
+              </div>
+              <div class="orders-chart-wrap">
+                <svg
+                  id="revenue-chart"
+                  class="orders-chart"
+                  viewBox="0 0 900 340"
+                  role="img"
+                  aria-label="从 2026 年 6 月 13 日到 10 月 2 日的累计净利润折线图，累计超过 9166 元"
+                  preserveAspectRatio="xMidYMid meet"
+                ></svg>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="about" class="section" data-section>
       <div class="container">
         <div class="section-heading reveal">
@@ -752,6 +818,7 @@
     </div>
   </footer>
 
+  <script src="orders-chart.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
