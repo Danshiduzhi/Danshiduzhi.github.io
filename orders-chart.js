@@ -25,8 +25,9 @@ const chartMargin = {
   left: 58
 };
 
-const chartWidth = 900;
-const chartHeight = 340;
+const compactChartViewport = window.matchMedia("(max-width: 720px)").matches;
+const chartWidth = compactChartViewport ? 520 : 900;
+const chartHeight = compactChartViewport ? 360 : 340;
 const chartInnerWidth = chartWidth - chartMargin.left - chartMargin.right;
 const chartInnerHeight = chartHeight - chartMargin.top - chartMargin.bottom;
 const chartStartDate = new Date(Date.UTC(2026, 5, 13));
@@ -72,17 +73,43 @@ function buildCumulativeSeries(dailyValues) {
   });
 }
 
+function getAxisConfig(values, valueType, isFullRange) {
+  if (isFullRange) {
+    return valueType === "currency"
+      ? { minValue: 0, maxValue: 10000, ticks: [0, 2500, 5000, 7500, 10000] }
+      : { minValue: 0, maxValue: 120, ticks: [0, 30, 60, 90, 120] };
+  }
+
+  const minimum = Math.min(...values);
+  const maximum = Math.max(...values);
+  const span = Math.max(maximum - minimum, valueType === "currency" ? 500 : 5);
+  const stepCandidates = valueType === "currency"
+    ? [100, 250, 500, 1000, 2000, 2500]
+    : [1, 2, 5, 10, 20, 25];
+  const step = stepCandidates.find((candidate) => candidate >= span / 4) || stepCandidates[stepCandidates.length - 1];
+  const minValue = Math.max(0, Math.floor((minimum - step * 0.5) / step) * step);
+  const maxValue = Math.ceil((maximum + step * 0.5) / step) * step;
+  const ticks = [];
+
+  for (let tick = minValue; tick <= maxValue; tick += step) {
+    ticks.push(tick);
+  }
+
+  return { minValue, maxValue, ticks };
+}
+
 function renderCumulativeChart(options) {
-  const { svg, dailyValues, maxValue, ticks, color, gradientId, peakThreshold, finalLabel, valueType } = options;
+  const { svg, dailyValues, minValue, maxValue, ticks, color, gradientId, peakThreshold, finalLabel, valueType, startOffset = 0, initialValue = 0 } = options;
 
   if (!svg) {
     return;
   }
 
-  const values = buildCumulativeSeries(dailyValues);
+  svg.setAttribute("viewBox", `0 0 ${chartWidth} ${chartHeight}`);
+  const values = buildCumulativeSeries(dailyValues).map((value) => value + initialValue);
   const lastIndex = values.length - 1;
   const x = (index) => chartMargin.left + (index / lastIndex) * chartInnerWidth;
-  const y = (value) => chartMargin.top + chartInnerHeight - (value / maxValue) * chartInnerHeight;
+  const y = (value) => chartMargin.top + chartInnerHeight - ((value - minValue) / (maxValue - minValue)) * chartInnerHeight;
   const baseline = chartMargin.top + chartInnerHeight;
 
   const defs = createChartNode("defs");
@@ -121,14 +148,18 @@ function renderCumulativeChart(options) {
     svg.appendChild(label);
   });
 
-  [0, 32, 63, 94, 109, 111].forEach((index) => {
+  const tickIndexes = values.length > 40
+    ? [0, Math.round((values.length - 1) * 0.33), Math.round((values.length - 1) * 0.66), values.length - 1]
+    : [0, Math.round((values.length - 1) * 0.5), values.length - 1];
+
+  tickIndexes.forEach((index) => {
     const label = createChartNode("text", {
       class: "chart-axis-label chart-x-label",
       x: x(index),
       y: chartHeight - 14,
       "text-anchor": "middle"
     });
-    label.textContent = formatDate(index);
+    label.textContent = formatDate(index + startOffset);
     svg.appendChild(label);
   });
 
@@ -161,7 +192,7 @@ function renderCumulativeChart(options) {
       fill: color
     });
     const title = createChartNode("title");
-    title.textContent = `${formatFullDate(index)}：单日${valueType === "currency" ? "净利润" : "成交"}${valueType === "currency" ? ` ¥${value}` : ` ${value} 单`}`;
+    title.textContent = `${formatFullDate(index + startOffset)}：单日${valueType === "currency" ? "净利润" : "成交"}${valueType === "currency" ? ` ¥${value}` : ` ${value} 单`}`;
     point.appendChild(title);
     svg.appendChild(point);
   });
@@ -214,28 +245,84 @@ function renderCumulativeChart(options) {
   observer.observe(svg);
 }
 
-renderCumulativeChart({
-  svg: document.querySelector("#orders-chart"),
-  dailyValues: ordersDaily,
-  maxValue: 120,
-  ticks: [0, 30, 60, 90, 120],
-  color: "#82d4f6",
-  gradientId: "orders-area-gradient",
-  peakThreshold: 4,
-  finalLabel: "117+ 单",
-  valueType: "orders"
+const recentDays = 30;
+let chartRange = "recent";
+
+function getChartWindow(values) {
+  if (chartRange === "full") {
+    return { values, startOffset: 0 };
+  }
+
+  return {
+    values: values.slice(-recentDays),
+    startOffset: values.length - recentDays
+  };
+}
+
+function renderAllCharts() {
+  const ordersChart = document.querySelector("#orders-chart");
+  const revenueChart = document.querySelector("#revenue-chart");
+  ordersChart.replaceChildren();
+  revenueChart.replaceChildren();
+
+  const ordersWindow = getChartWindow(ordersDaily);
+  const revenueWindow = getChartWindow(revenueDaily);
+  const ordersBaseValues = buildCumulativeSeries(ordersDaily).slice(0, ordersWindow.startOffset);
+  const revenueBaseValues = buildCumulativeSeries(revenueDaily).slice(0, revenueWindow.startOffset);
+  const ordersBase = ordersBaseValues[ordersBaseValues.length - 1] || 0;
+  const revenueBase = revenueBaseValues[revenueBaseValues.length - 1] || 0;
+  const ordersValues = buildCumulativeSeries(ordersWindow.values).map((value) => value + ordersBase);
+  const revenueValues = buildCumulativeSeries(revenueWindow.values).map((value) => value + revenueBase);
+  const ordersAxis = getAxisConfig(ordersValues, "orders", chartRange === "full");
+  const revenueAxis = getAxisConfig(revenueValues, "currency", chartRange === "full");
+  const rangeDescription = chartRange === "full" ? "完整统计" : "截止 2026 年 10 月 2 日前最近 30 天";
+
+  ordersChart.setAttribute("aria-label", `${rangeDescription}的累计成交订单折线图，累计超过 117 单`);
+  revenueChart.setAttribute("aria-label", `${rangeDescription}的累计净利润折线图，累计超过 9166 元`);
+
+  renderCumulativeChart({
+    svg: ordersChart,
+    dailyValues: ordersWindow.values,
+    startOffset: ordersWindow.startOffset,
+    initialValue: ordersBase,
+    minValue: ordersAxis.minValue,
+    maxValue: ordersAxis.maxValue,
+    ticks: ordersAxis.ticks,
+    color: "#82d4f6",
+    gradientId: "orders-area-gradient",
+    peakThreshold: 4,
+    finalLabel: "117+ 单",
+    valueType: "orders"
+  });
+
+  renderCumulativeChart({
+    svg: revenueChart,
+    dailyValues: revenueWindow.values,
+    startOffset: revenueWindow.startOffset,
+    initialValue: revenueBase,
+    minValue: revenueAxis.minValue,
+    maxValue: revenueAxis.maxValue,
+    ticks: revenueAxis.ticks,
+    color: "#d6b25e",
+    gradientId: "revenue-area-gradient",
+    peakThreshold: 300,
+    finalLabel: "¥9,166+",
+    valueType: "currency"
+  });
+}
+
+const expandButton = document.querySelector("#orders-expand");
+const chartsContainer = document.querySelector("#orders-charts");
+
+expandButton?.addEventListener("click", () => {
+  chartRange = chartRange === "recent" ? "full" : "recent";
+  const isFull = chartRange === "full";
+  chartsContainer.dataset.range = chartRange;
+  expandButton.textContent = isFull ? "收起完整统计" : "查看完整统计";
+  expandButton.setAttribute("aria-expanded", String(isFull));
+  renderAllCharts();
 });
 
-renderCumulativeChart({
-  svg: document.querySelector("#revenue-chart"),
-  dailyValues: revenueDaily,
-  maxValue: 10000,
-  ticks: [0, 2500, 5000, 7500, 10000],
-  color: "#d6b25e",
-  gradientId: "revenue-area-gradient",
-  peakThreshold: 300,
-  finalLabel: "¥9,166+",
-  valueType: "currency"
-});
+renderAllCharts();
 
 })();
