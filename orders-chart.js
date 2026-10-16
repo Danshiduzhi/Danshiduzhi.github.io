@@ -1,328 +1,205 @@
 (() => {
   "use strict";
 
-const ordersDaily = [
-  4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 3, 0, 1, 1, 1, 1, 5, 0, 0, 1, 1, 0, 1, 1,
-  0, 0, 1, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 5, 1, 0, 1, 1, 1, 0, 0,
-  1, 1, 1, 1, 1, 0, 1, 0, 0, 2, 1, 1, 3, 1, 0, 1, 2, 1, 1, 0, 1, 1, 2, 0,
-  1, 1, 0, 1, 1, 1, 1, 1, 0, 2, 2, 2, 1, 1, 2, 1, 0, 3, 4, 4, 1, 3, 1, 1,
-  1, 1, 1, 2, 1, 1, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1
-];
+  // Illustrative daily distribution, not a transaction ledger. Preserve the supplied totals.
+  const ordersDaily = [
+    4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 3, 0, 1, 1, 1, 1, 5, 0, 0, 1, 1, 0, 1, 1,
+    0, 0, 1, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 5, 1, 0, 1, 1, 1, 0, 0,
+    1, 1, 1, 1, 1, 0, 1, 0, 0, 2, 1, 1, 3, 1, 0, 1, 2, 1, 1, 0, 1, 1, 2, 0,
+    1, 1, 0, 1, 1, 1, 1, 1, 0, 2, 2, 2, 1, 1, 2, 1, 0, 3, 4, 4, 1, 3, 1, 1,
+    1, 1, 1, 2, 1, 1, 0, 1, 1, 3, 1, 1, 1, 1, 1, 1
+  ];
+  const profitDaily = [
+    230, 0, 0, 0, 0, 0, 0, 0, 44, 0, 156, 0, 53, 74, 160, 63, 322, 0, 0, 57,
+    53, 0, 61, 106, 0, 0, 73, 144, 0, 68, 70, 70, 61, 56, 67, 75, 94, 0, 0, 0,
+    388, 69, 0, 71, 75, 71, 0, 0, 71, 66, 91, 54, 129, 0, 58, 0, 0, 151, 81,
+    112, 288, 116, 0, 68, 139, 90, 73, 0, 89, 90, 183, 0, 80, 75, 0, 70, 57,
+    66, 79, 72, 0, 176, 173, 160, 76, 75, 168, 84, 0, 214, 338, 417, 95, 233,
+    71, 61, 89, 86, 90, 161, 72, 82, 0, 76, 72, 278, 91, 81, 89, 112, 69, 98
+  ];
 
-const revenueDaily = [
-  230, 0, 0, 0, 0, 0, 0, 0, 44, 0, 156, 0, 53, 74, 160, 63, 322, 0, 0, 57,
-  53, 0, 61, 106, 0, 0, 73, 144, 0, 68, 70, 70, 61, 56, 67, 75, 94, 0, 0, 0,
-  388, 69, 0, 71, 75, 71, 0, 0, 71, 66, 91, 54, 129, 0, 58, 0, 0, 151, 81,
-  112, 288, 116, 0, 68, 139, 90, 73, 0, 89, 90, 183, 0, 80, 75, 0, 70, 57,
-  66, 79, 72, 0, 176, 173, 160, 76, 75, 168, 84, 0, 214, 338, 417, 95, 233,
-  71, 61, 89, 86, 90, 161, 72, 82, 0, 76, 72, 278, 91, 81, 89, 112, 69, 98
-];
+  const ordersChart = document.querySelector("#orders-chart");
+  const profitChart = document.querySelector("#revenue-chart");
+  const expandButton = document.querySelector("#orders-expand");
+  const chartsContainer = document.querySelector("#orders-charts");
+  const rangeLabel = document.querySelector("#orders-range-label");
+  if (!ordersChart || !profitChart || !chartsContainer) return;
 
-const chartMargin = {
-  top: 28,
-  right: 34,
-  bottom: 44,
-  left: 58
-};
+  const recentDays = 30;
+  const chartStartDate = Date.UTC(2026, 5, 13);
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const compactViewport = window.matchMedia("(max-width: 600px)");
+  const namespace = "http://www.w3.org/2000/svg";
+  let chartRange = "recent";
+  let resizeFrame = 0;
+  let widthSignature = "";
 
-const compactChartViewport = window.matchMedia("(max-width: 720px)").matches;
-const chartWidth = compactChartViewport ? 520 : 900;
-const chartHeight = compactChartViewport ? 360 : 340;
-const chartInnerWidth = chartWidth - chartMargin.left - chartMargin.right;
-const chartInnerHeight = chartHeight - chartMargin.top - chartMargin.bottom;
-const chartStartDate = new Date(Date.UTC(2026, 5, 13));
-const chartPrefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const lineObserver = "IntersectionObserver" in window
+    ? new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const line = entry.target.querySelector(".chart-line");
+        const area = entry.target.querySelector(".chart-area");
+        if (line && area) {
+          line.style.transition = "stroke-dashoffset 1100ms cubic-bezier(0.2, 0.7, 0.2, 1)";
+          line.style.strokeDashoffset = "0";
+          area.style.transition = "opacity 650ms ease 150ms";
+          area.style.opacity = "1";
+        }
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.2 })
+    : null;
 
-const svgNamespace = "http://www.w3.org/2000/svg";
-
-function createChartNode(tagName, attributes = {}) {
-  const node = document.createElementNS(svgNamespace, tagName);
-
-  Object.entries(attributes).forEach(([key, value]) => {
-    node.setAttribute(key, String(value));
-  });
-
-  return node;
-}
-
-function formatDate(index) {
-  const date = new Date(chartStartDate);
-  date.setUTCDate(date.getUTCDate() + index);
-  return `${String(date.getUTCMonth() + 1).padStart(2, "0")}/${String(date.getUTCDate()).padStart(2, "0")}`;
-}
-
-function formatFullDate(index) {
-  const date = new Date(chartStartDate);
-  date.setUTCDate(date.getUTCDate() + index);
-  return date.toISOString().slice(0, 10);
-}
-
-function formatTick(value, type) {
-  if (type === "currency") {
-    return value === 0 ? "0" : `¥${value / 1000}k`;
+  function node(tagName, attributes = {}, text) {
+    const element = document.createElementNS(namespace, tagName);
+    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, String(value)));
+    if (text !== undefined) element.textContent = text;
+    return element;
   }
 
-  return String(value);
-}
-
-function buildCumulativeSeries(dailyValues) {
-  let total = 0;
-  return dailyValues.map((value) => {
-    total += value;
-    return total;
-  });
-}
-
-function getAxisConfig(values, valueType, isFullRange) {
-  if (isFullRange) {
-    return valueType === "currency"
-      ? { minValue: 0, maxValue: 10000, ticks: [0, 2500, 5000, 7500, 10000] }
-      : { minValue: 0, maxValue: 120, ticks: [0, 30, 60, 90, 120] };
+  function formatDate(index) {
+    const date = new Date(chartStartDate + index * 86400000);
+    return `${String(date.getUTCMonth() + 1).padStart(2, "0")}.${String(date.getUTCDate()).padStart(2, "0")}`;
   }
 
-  const minimum = Math.min(...values);
-  const maximum = Math.max(...values);
-  const span = Math.max(maximum - minimum, valueType === "currency" ? 500 : 5);
-  const stepCandidates = valueType === "currency"
-    ? [100, 250, 500, 1000, 2000, 2500]
-    : [1, 2, 5, 10, 20, 25];
-  const step = stepCandidates.find((candidate) => candidate >= span / 4) || stepCandidates[stepCandidates.length - 1];
-  const minValue = Math.max(0, Math.floor((minimum - step * 0.5) / step) * step);
-  const maxValue = Math.ceil((maximum + step * 0.5) / step) * step;
-  const ticks = [];
-
-  for (let tick = minValue; tick <= maxValue; tick += step) {
-    ticks.push(tick);
+  function formatTick(value, currency) {
+    return currency && value !== 0 ? `¥${value / 1000}k` : String(value);
   }
 
-  return { minValue, maxValue, ticks };
-}
-
-function renderCumulativeChart(options) {
-  const { svg, dailyValues, minValue, maxValue, ticks, color, gradientId, peakThreshold, finalLabel, valueType, startOffset = 0, initialValue = 0 } = options;
-
-  if (!svg) {
-    return;
+  function cumulative(values) {
+    let total = 0;
+    return values.map((value) => (total += value));
   }
 
-  svg.setAttribute("viewBox", `0 0 ${chartWidth} ${chartHeight}`);
-  const values = buildCumulativeSeries(dailyValues).map((value) => value + initialValue);
-  const lastIndex = values.length - 1;
-  const x = (index) => chartMargin.left + (index / lastIndex) * chartInnerWidth;
-  const y = (value) => chartMargin.top + chartInnerHeight - ((value - minValue) / (maxValue - minValue)) * chartInnerHeight;
-  const baseline = chartMargin.top + chartInnerHeight;
+  const orderTotals = cumulative(ordersDaily);
+  const profitTotals = cumulative(profitDaily);
 
-  const defs = createChartNode("defs");
-  const gradient = createChartNode("linearGradient", {
-    id: gradientId,
-    x1: "0",
-    y1: "0",
-    x2: "0",
-    y2: "1"
-  });
-  gradient.append(
-    createChartNode("stop", { offset: "0", "stop-color": color, "stop-opacity": "0.28" }),
-    createChartNode("stop", { offset: "1", "stop-color": color, "stop-opacity": "0" })
-  );
-  defs.appendChild(gradient);
-  svg.appendChild(defs);
+  function axisFor(values, currency) {
+    if (chartRange === "full") {
+      return currency
+        ? { min: 0, max: 10000, ticks: [0, 2500, 5000, 7500, 10000] }
+        : { min: 0, max: 120, ticks: [0, 30, 60, 90, 120] };
+    }
+    const low = values[0];
+    const high = values[values.length - 1];
+    const span = Math.max(high - low, currency ? 500 : 5);
+    const candidates = currency ? [100, 250, 500, 1000, 2000, 2500] : [1, 2, 5, 10, 20, 25];
+    const step = candidates.find((candidate) => candidate >= span / 4) || candidates[candidates.length - 1];
+    const min = Math.max(0, Math.floor((low - step * 0.4) / step) * step);
+    const max = Math.ceil((high + step * 0.4) / step) * step;
+    const ticks = [];
+    for (let tick = min; tick <= max; tick += step) ticks.push(tick);
+    return { min, max, ticks };
+  }
 
-  ticks.forEach((tick) => {
-    const tickY = y(tick);
-    svg.appendChild(
-      createChartNode("line", {
-        class: "chart-grid-line",
-        x1: chartMargin.left,
-        y1: tickY,
-        x2: chartWidth - chartMargin.right,
-        y2: tickY
-      })
+  function renderChart({ svg, totals, color, gradientId, finalLabel, currency = false, animate = false }) {
+    const startOffset = chartRange === "full" ? 0 : Math.max(0, totals.length - recentDays);
+    // Slice cumulative values so the recent view never implies a reset to zero.
+    const values = totals.slice(startOffset);
+    const width = Math.max(220, Math.round(svg.getBoundingClientRect().width));
+    const height = Math.round(width / (compactViewport.matches ? 1.6 : 2));
+    const margin = { top: 30, right: 24, bottom: 34, left: 49 };
+    const plotWidth = width - margin.left - margin.right;
+    const plotHeight = height - margin.top - margin.bottom;
+    const axis = axisFor(values, currency);
+    const lastIndex = values.length - 1;
+    const x = (index) => margin.left + index / Math.max(1, lastIndex) * plotWidth;
+    const y = (value) => margin.top + plotHeight * (1 - (value - axis.min) / (axis.max - axis.min));
+    const baseline = height - margin.bottom;
+    const fragment = document.createDocumentFragment();
+    const defs = node("defs");
+    const gradient = node("linearGradient", { id: gradientId, x1: "0", y1: "0", x2: "0", y2: "1" });
+    gradient.append(
+      node("stop", { offset: "0", "stop-color": color, "stop-opacity": "0.15" }),
+      node("stop", { offset: "1", "stop-color": color, "stop-opacity": "0" })
     );
-    const label = createChartNode("text", {
-      class: "chart-axis-label chart-y-label",
-      x: chartMargin.left - 12,
-      y: tickY + 4,
-      "text-anchor": "end"
+    defs.append(gradient);
+    fragment.append(defs);
+
+    axis.ticks.forEach((tick) => {
+      const tickY = y(tick);
+      fragment.append(
+        node("line", { class: "chart-grid-line", x1: margin.left, y1: tickY, x2: width - margin.right, y2: tickY }),
+        node("text", { class: "chart-axis-label", x: margin.left - 10, y: tickY + 4, "text-anchor": "end" }, formatTick(tick, currency))
+      );
     });
-    label.textContent = formatTick(tick, valueType);
-    svg.appendChild(label);
-  });
 
-  const tickIndexes = values.length > 40
-    ? [0, Math.round((values.length - 1) * 0.33), Math.round((values.length - 1) * 0.66), values.length - 1]
-    : [0, Math.round((values.length - 1) * 0.5), values.length - 1];
-
-  tickIndexes.forEach((index) => {
-    const label = createChartNode("text", {
-      class: "chart-axis-label chart-x-label",
-      x: x(index),
-      y: chartHeight - 14,
-      "text-anchor": "middle"
-    });
-    label.textContent = formatDate(index + startOffset);
-    svg.appendChild(label);
-  });
-
-  const areaPath = values.map((value, index) => `${index === 0 ? "M" : "L"} ${x(index)} ${y(value)}`).join(" ");
-  const area = createChartNode("path", {
-    class: "chart-area",
-    d: `${areaPath} L ${x(lastIndex)} ${baseline} L ${x(0)} ${baseline} Z`,
-    fill: `url(#${gradientId})`
-  });
-  svg.appendChild(area);
-
-  const linePath = values.map((value, index) => `${index === 0 ? "M" : "L"} ${x(index)} ${y(value)}`).join(" ");
-  const line = createChartNode("path", {
-    class: "chart-line",
-    d: linePath,
-    stroke: color
-  });
-  svg.appendChild(line);
-
-  dailyValues.forEach((value, index) => {
-    if (value < peakThreshold) {
-      return;
+    const tickCount = chartRange === "full" ? 4 : 3;
+    for (let i = 0; i < tickCount; i += 1) {
+      const index = Math.round(i / (tickCount - 1) * lastIndex);
+      fragment.append(node("text", {
+        class: "chart-axis-label", x: x(index), y: height - 12, "text-anchor": "middle"
+      }, formatDate(index + startOffset)));
     }
 
-    const point = createChartNode("circle", {
-      class: "chart-point",
-      cx: x(index),
-      cy: y(values[index]),
-      r: 4,
-      fill: color
+    const path = values.map((value, index) => `${index === 0 ? "M" : "L"}${x(index).toFixed(2)},${y(value).toFixed(2)}`).join(" ");
+    const area = node("path", {
+      class: "chart-area", d: `${path} L${x(lastIndex)},${baseline} L${x(0)},${baseline} Z`, fill: `url(#${gradientId})`
     });
-    const title = createChartNode("title");
-    title.textContent = `${formatFullDate(index + startOffset)}：单日${valueType === "currency" ? "净利润" : "成交"}${valueType === "currency" ? ` ¥${value}` : ` ${value} 单`}`;
-    point.appendChild(title);
-    svg.appendChild(point);
-  });
+    const line = node("path", { class: "chart-line", d: path, stroke: color });
+    fragment.append(area, line);
+    fragment.append(node("circle", {
+      class: "chart-final-point", cx: x(lastIndex), cy: y(values[lastIndex]), r: 4, fill: color
+    }));
+    fragment.append(node("text", {
+      class: "chart-final-label", x: x(lastIndex) - 8, y: y(values[lastIndex]) - 13, "text-anchor": "end"
+    }, finalLabel));
 
-  const finalX = x(lastIndex);
-  const finalY = y(values[lastIndex]);
-  svg.appendChild(
-    createChartNode("circle", {
-      class: "chart-final-point",
-      cx: finalX,
-      cy: finalY,
-      r: 5.5,
-      fill: color
-    })
-  );
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("aria-label", `${formatDate(startOffset)} 至 ${formatDate(totals.length - 1)}累计${currency ? "净利润" : "成交订单"}趋势示意，总计 ${finalLabel}，非逐日账本`);
+    svg.replaceChildren(fragment);
 
-  const finalText = createChartNode("text", {
-    class: "chart-final-label",
-    x: finalX - 8,
-    y: finalY + 22,
-    "text-anchor": "end"
-  });
-  finalText.textContent = finalLabel;
-  svg.appendChild(finalText);
-
-  if (chartPrefersReducedMotion) {
-    return;
+    if (animate && lineObserver && !reduceMotion.matches) {
+      const length = line.getTotalLength();
+      line.style.strokeDasharray = String(length);
+      line.style.strokeDashoffset = String(length);
+      area.style.opacity = "0";
+      lineObserver.observe(svg);
+    }
   }
 
-  const length = line.getTotalLength();
-  line.style.strokeDasharray = `${length}`;
-  line.style.strokeDashoffset = `${length}`;
-  area.style.opacity = "0";
-
-  const observer = new IntersectionObserver(
-    ([entry], chartObserver) => {
-      if (!entry.isIntersecting) {
-        return;
-      }
-
-      line.style.transition = "stroke-dashoffset 1500ms cubic-bezier(0.16, 1, 0.3, 1)";
-      line.style.strokeDashoffset = "0";
-      area.style.transition = "opacity 900ms ease-in-out 250ms";
-      area.style.opacity = "1";
-      chartObserver.disconnect();
-    },
-    { threshold: 0.28 }
-  );
-
-  observer.observe(svg);
-}
-
-const recentDays = 30;
-let chartRange = "recent";
-
-function getChartWindow(values) {
-  if (chartRange === "full") {
-    return { values, startOffset: 0 };
+  function getWidthSignature() {
+    return `${ordersChart.clientWidth}:${profitChart.clientWidth}:${compactViewport.matches}`;
   }
 
-  return {
-    values: values.slice(-recentDays),
-    startOffset: values.length - recentDays
-  };
-}
+  function renderAll(animate = false) {
+    lineObserver?.disconnect();
+    const common = { animate };
+    renderChart({ ...common, svg: ordersChart, totals: orderTotals, color: "#9bd8cb", gradientId: "orders-area-gradient", finalLabel: "117+ 单" });
+    renderChart({ ...common, svg: profitChart, totals: profitTotals, color: "#d5bb80", gradientId: "profit-area-gradient", finalLabel: "¥9,166+", currency: true });
+    const isFull = chartRange === "full";
+    chartsContainer.dataset.range = chartRange;
+    expandButton?.setAttribute("aria-expanded", String(isFull));
+    const buttonLabel = expandButton?.querySelector("[data-range-label]");
+    if (buttonLabel) buttonLabel.textContent = isFull ? "收起完整统计" : "查看完整统计";
+    if (rangeLabel) {
+      const first = isFull ? 0 : Math.max(0, ordersDaily.length - recentDays);
+      rangeLabel.textContent = `${isFull ? "完整趋势" : "近期趋势"} · ${formatDate(first)} — ${formatDate(ordersDaily.length - 1)}`;
+    }
+    widthSignature = getWidthSignature();
+  }
 
-function renderAllCharts() {
-  const ordersChart = document.querySelector("#orders-chart");
-  const revenueChart = document.querySelector("#revenue-chart");
-  ordersChart.replaceChildren();
-  revenueChart.replaceChildren();
+  function requestResize() {
+    if (getWidthSignature() === widthSignature || resizeFrame) return;
+    resizeFrame = window.requestAnimationFrame(() => {
+      resizeFrame = 0;
+      renderAll();
+    });
+  }
 
-  const ordersWindow = getChartWindow(ordersDaily);
-  const revenueWindow = getChartWindow(revenueDaily);
-  const ordersBaseValues = buildCumulativeSeries(ordersDaily).slice(0, ordersWindow.startOffset);
-  const revenueBaseValues = buildCumulativeSeries(revenueDaily).slice(0, revenueWindow.startOffset);
-  const ordersBase = ordersBaseValues[ordersBaseValues.length - 1] || 0;
-  const revenueBase = revenueBaseValues[revenueBaseValues.length - 1] || 0;
-  const ordersValues = buildCumulativeSeries(ordersWindow.values).map((value) => value + ordersBase);
-  const revenueValues = buildCumulativeSeries(revenueWindow.values).map((value) => value + revenueBase);
-  const ordersAxis = getAxisConfig(ordersValues, "orders", chartRange === "full");
-  const revenueAxis = getAxisConfig(revenueValues, "currency", chartRange === "full");
-  const rangeDescription = chartRange === "full" ? "完整统计" : "截止 2026 年 10 月 2 日前最近 30 天";
-
-  ordersChart.setAttribute("aria-label", `${rangeDescription}的累计成交订单折线图，累计超过 117 单`);
-  revenueChart.setAttribute("aria-label", `${rangeDescription}的累计净利润折线图，累计超过 9166 元`);
-
-  renderCumulativeChart({
-    svg: ordersChart,
-    dailyValues: ordersWindow.values,
-    startOffset: ordersWindow.startOffset,
-    initialValue: ordersBase,
-    minValue: ordersAxis.minValue,
-    maxValue: ordersAxis.maxValue,
-    ticks: ordersAxis.ticks,
-    color: "#82d4f6",
-    gradientId: "orders-area-gradient",
-    peakThreshold: 4,
-    finalLabel: "117+ 单",
-    valueType: "orders"
+  expandButton?.addEventListener("click", () => {
+    chartRange = chartRange === "recent" ? "full" : "recent";
+    renderAll();
   });
-
-  renderCumulativeChart({
-    svg: revenueChart,
-    dailyValues: revenueWindow.values,
-    startOffset: revenueWindow.startOffset,
-    initialValue: revenueBase,
-    minValue: revenueAxis.minValue,
-    maxValue: revenueAxis.maxValue,
-    ticks: revenueAxis.ticks,
-    color: "#d6b25e",
-    gradientId: "revenue-area-gradient",
-    peakThreshold: 300,
-    finalLabel: "¥9,166+",
-    valueType: "currency"
-  });
-}
-
-const expandButton = document.querySelector("#orders-expand");
-const chartsContainer = document.querySelector("#orders-charts");
-
-expandButton?.addEventListener("click", () => {
-  chartRange = chartRange === "recent" ? "full" : "recent";
-  const isFull = chartRange === "full";
-  chartsContainer.dataset.range = chartRange;
-  expandButton.textContent = isFull ? "收起完整统计" : "查看完整统计";
-  expandButton.setAttribute("aria-expanded", String(isFull));
-  renderAllCharts();
-});
-
-renderAllCharts();
-
+  reduceMotion.addEventListener("change", () => renderAll());
+  if ("ResizeObserver" in window) {
+    const resizeObserver = new ResizeObserver(requestResize);
+    resizeObserver.observe(ordersChart.parentElement);
+    resizeObserver.observe(profitChart.parentElement);
+  } else {
+    window.addEventListener("resize", requestResize, { passive: true });
+  }
+  compactViewport.addEventListener("change", requestResize);
+  renderAll(true);
 })();
