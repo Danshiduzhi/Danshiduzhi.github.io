@@ -17,6 +17,7 @@
     66, 79, 72, 0, 176, 173, 160, 76, 75, 168, 84, 0, 214, 338, 417, 95, 233,
     71, 61, 89, 86, 90, 161, 72, 82, 0, 76, 72, 278, 91, 81, 89, 112, 69, 98
   ];
+  const latestSnapshot = { date: Date.UTC(2026, 9, 16), orders: 121, profit: 10766 };
 
   const ordersChart = document.querySelector("#orders-chart");
   const profitChart = document.querySelector("#revenue-chart");
@@ -27,6 +28,7 @@
 
   const recentDays = 30;
   const chartStartDate = Date.UTC(2026, 5, 13);
+  const day = 86400000;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const compactViewport = window.matchMedia("(max-width: 600px)");
   const namespace = "http://www.w3.org/2000/svg";
@@ -40,11 +42,16 @@
         if (!entry.isIntersecting) return;
         const line = entry.target.querySelector(".chart-line");
         const area = entry.target.querySelector(".chart-area");
+        const update = entry.target.querySelector(".chart-update-line");
         if (line && area) {
           line.style.transition = "stroke-dashoffset 1100ms cubic-bezier(0.2, 0.7, 0.2, 1)";
           line.style.strokeDashoffset = "0";
           area.style.transition = "opacity 650ms ease 150ms";
           area.style.opacity = "1";
+          if (update) {
+            update.style.transition = "opacity 650ms ease 200ms";
+            update.style.opacity = "1";
+          }
         }
         observer.unobserve(entry.target);
       });
@@ -58,8 +65,8 @@
     return element;
   }
 
-  function formatDate(index) {
-    const date = new Date(chartStartDate + index * 86400000);
+  function formatDate(timestamp) {
+    const date = new Date(timestamp);
     return `${String(date.getUTCMonth() + 1).padStart(2, "0")}.${String(date.getUTCDate()).padStart(2, "0")}`;
   }
 
@@ -72,21 +79,24 @@
     return values.map((value) => (total += value));
   }
 
-  const orderTotals = cumulative(ordersDaily);
-  const profitTotals = cumulative(profitDaily);
+  // The new snapshot is an aggregate, not invented daily activity after October 2.
+  const dates = [...ordersDaily.map((_, index) => chartStartDate + index * day), latestSnapshot.date];
+  const orderTotals = [...cumulative(ordersDaily), latestSnapshot.orders];
+  const profitTotals = [...cumulative(profitDaily), latestSnapshot.profit];
+
+  function getStartOffset() {
+    if (chartRange === "full") return 0;
+    const cutoff = latestSnapshot.date - (recentDays - 1) * day;
+    return Math.max(0, dates.findIndex((date) => date >= cutoff));
+  }
 
   function axisFor(values, currency) {
-    if (chartRange === "full") {
-      return currency
-        ? { min: 0, max: 10000, ticks: [0, 2500, 5000, 7500, 10000] }
-        : { min: 0, max: 120, ticks: [0, 30, 60, 90, 120] };
-    }
-    const low = values[0];
+    const low = chartRange === "full" ? 0 : values[0];
     const high = values[values.length - 1];
     const span = Math.max(high - low, currency ? 500 : 5);
-    const candidates = currency ? [100, 250, 500, 1000, 2000, 2500] : [1, 2, 5, 10, 20, 25];
-    const step = candidates.find((candidate) => candidate >= span / 4) || candidates[candidates.length - 1];
-    const min = Math.max(0, Math.floor((low - step * 0.4) / step) * step);
+    const unit = 10 ** Math.floor(Math.log10(span / 4));
+    const step = [1, 2, 2.5, 5, 10].find((candidate) => candidate * unit >= span / 4) * unit;
+    const min = chartRange === "full" ? 0 : Math.max(0, Math.floor((low - step * 0.4) / step) * step);
     const max = Math.ceil((high + step * 0.4) / step) * step;
     const ticks = [];
     for (let tick = min; tick <= max; tick += step) ticks.push(tick);
@@ -94,7 +104,7 @@
   }
 
   function renderChart({ svg, totals, color, gradientId, finalLabel, currency = false, animate = false }) {
-    const startOffset = chartRange === "full" ? 0 : Math.max(0, totals.length - recentDays);
+    const startOffset = getStartOffset();
     // Slice cumulative values so the recent view never implies a reset to zero.
     const values = totals.slice(startOffset);
     const width = Math.max(220, Math.round(svg.getBoundingClientRect().width));
@@ -104,7 +114,9 @@
     const plotHeight = height - margin.top - margin.bottom;
     const axis = axisFor(values, currency);
     const lastIndex = values.length - 1;
-    const x = (index) => margin.left + index / Math.max(1, lastIndex) * plotWidth;
+    const firstDate = dates[startOffset];
+    const dateSpan = Math.max(day, latestSnapshot.date - firstDate);
+    const x = (index) => margin.left + (dates[index + startOffset] - firstDate) / dateSpan * plotWidth;
     const y = (value) => margin.top + plotHeight * (1 - (value - axis.min) / (axis.max - axis.min));
     const baseline = height - margin.bottom;
     const fragment = document.createDocumentFragment();
@@ -127,18 +139,25 @@
 
     const tickCount = chartRange === "full" ? 4 : 3;
     for (let i = 0; i < tickCount; i += 1) {
-      const index = Math.round(i / (tickCount - 1) * lastIndex);
+      const fraction = i / (tickCount - 1);
+      const timestamp = firstDate + Math.round(fraction * dateSpan / day) * day;
       fragment.append(node("text", {
-        class: "chart-axis-label", x: x(index), y: height - 12, "text-anchor": "middle"
-      }, formatDate(index + startOffset)));
+        class: "chart-axis-label", x: margin.left + fraction * plotWidth, y: height - 12, "text-anchor": "middle"
+      }, formatDate(timestamp)));
     }
 
-    const path = values.map((value, index) => `${index === 0 ? "M" : "L"}${x(index).toFixed(2)},${y(value).toFixed(2)}`).join(" ");
+    const history = values.slice(0, -1);
+    const lastHistoryIndex = history.length - 1;
+    const path = history.map((value, index) => `${index === 0 ? "M" : "L"}${x(index).toFixed(2)},${y(value).toFixed(2)}`).join(" ");
     const area = node("path", {
-      class: "chart-area", d: `${path} L${x(lastIndex)},${baseline} L${x(0)},${baseline} Z`, fill: `url(#${gradientId})`
+      class: "chart-area", d: `${path} L${x(lastHistoryIndex)},${baseline} L${x(0)},${baseline} Z`, fill: `url(#${gradientId})`
     });
     const line = node("path", { class: "chart-line", d: path, stroke: color });
-    fragment.append(area, line);
+    const update = node("path", {
+      class: "chart-update-line", stroke: color,
+      d: `M${x(lastHistoryIndex)},${y(history[lastHistoryIndex])} L${x(lastIndex)},${y(values[lastIndex])}`
+    });
+    fragment.append(area, line, update);
     fragment.append(node("circle", {
       class: "chart-final-point", cx: x(lastIndex), cy: y(values[lastIndex]), r: 4, fill: color
     }));
@@ -147,7 +166,7 @@
     }, finalLabel));
 
     svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-    svg.setAttribute("aria-label", `${formatDate(startOffset)} 至 ${formatDate(totals.length - 1)}累计${currency ? "净利润" : "成交订单"}趋势示意，总计 ${finalLabel}，非逐日账本`);
+    svg.setAttribute("aria-label", `${formatDate(firstDate)} 至 ${formatDate(latestSnapshot.date)}累计${currency ? "净利润" : "成交订单"}趋势示意，总计 ${finalLabel}，10月2日后为累计更新，非逐日账本`);
     svg.replaceChildren(fragment);
 
     if (animate && lineObserver && !reduceMotion.matches) {
@@ -155,6 +174,7 @@
       line.style.strokeDasharray = String(length);
       line.style.strokeDashoffset = String(length);
       area.style.opacity = "0";
+      update.style.opacity = "0";
       lineObserver.observe(svg);
     }
   }
@@ -166,16 +186,15 @@
   function renderAll(animate = false) {
     lineObserver?.disconnect();
     const common = { animate };
-    renderChart({ ...common, svg: ordersChart, totals: orderTotals, color: "#9bd8cb", gradientId: "orders-area-gradient", finalLabel: "117+ 单" });
-    renderChart({ ...common, svg: profitChart, totals: profitTotals, color: "#d5bb80", gradientId: "profit-area-gradient", finalLabel: "¥9,166+", currency: true });
+    renderChart({ ...common, svg: ordersChart, totals: orderTotals, color: "#9bd8cb", gradientId: "orders-area-gradient", finalLabel: `${latestSnapshot.orders.toLocaleString("en-US")}+ 单` });
+    renderChart({ ...common, svg: profitChart, totals: profitTotals, color: "#d5bb80", gradientId: "profit-area-gradient", finalLabel: `¥${latestSnapshot.profit.toLocaleString("en-US")}+`, currency: true });
     const isFull = chartRange === "full";
     chartsContainer.dataset.range = chartRange;
     expandButton?.setAttribute("aria-expanded", String(isFull));
     const buttonLabel = expandButton?.querySelector("[data-range-label]");
     if (buttonLabel) buttonLabel.textContent = isFull ? "收起完整统计" : "查看完整统计";
     if (rangeLabel) {
-      const first = isFull ? 0 : Math.max(0, ordersDaily.length - recentDays);
-      rangeLabel.textContent = `${isFull ? "完整趋势" : "近期趋势"} · ${formatDate(first)} — ${formatDate(ordersDaily.length - 1)}`;
+      rangeLabel.textContent = `${isFull ? "完整趋势" : "近期趋势"} · ${formatDate(dates[getStartOffset()])} — ${formatDate(latestSnapshot.date)}`;
     }
     widthSignature = getWidthSignature();
   }
